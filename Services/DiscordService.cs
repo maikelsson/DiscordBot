@@ -13,7 +13,7 @@ namespace DiscordBot.Services
         {
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
-            _client.Log += Log;
+            _client.Log += _services.GetRequiredService<LoggingService>().OnLog; 
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
@@ -24,13 +24,8 @@ namespace DiscordBot.Services
         {
             return new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<LoggingService>()
                 .BuildServiceProvider();
-        }
-
-        private Task Log(LogMessage msg)
-        {
-            System.Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
         }
 
         private async Task LogClient(DiscordSocketClient client, TokenType type)
