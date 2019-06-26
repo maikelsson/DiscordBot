@@ -19,6 +19,7 @@ namespace DiscordBot.Services
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
             _lavalink = _services.GetRequiredService<Lavalink>();
+            _lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
