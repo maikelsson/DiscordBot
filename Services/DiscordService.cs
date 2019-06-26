@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using DiscordBot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using Victoria;
 
 namespace DiscordBot.Services
 {
@@ -11,11 +12,13 @@ namespace DiscordBot.Services
     {
         private DiscordSocketClient _client;
         private ServiceProvider _services;
+        private Lavalink _lavalink;
         public async Task InitializeAsync()
         {
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
-            _client.Log += _services.GetRequiredService<LoggingService>().OnLog; 
+            _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _lavalink = _services.GetRequiredService<Lavalink>();
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
@@ -27,6 +30,7 @@ namespace DiscordBot.Services
         {
             return new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<Lavalink>()
                 .AddSingleton<AudioService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<CommandService>()

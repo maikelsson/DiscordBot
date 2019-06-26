@@ -4,6 +4,11 @@ namespace DiscordBot.Services
 {
     public class AudioService
     {
-        private readonly Lavalink _lavalink;
+        private Lavalink _lavalink;
+
+        public AudioService(Lavalink lavalink)
+        {
+            _lavalink = lavalink;
+        }
     }
 }
