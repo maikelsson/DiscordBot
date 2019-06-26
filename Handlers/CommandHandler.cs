@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
@@ -11,18 +12,18 @@ namespace DiscordBot.Handlers
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly ServiceProvider _services;
+        private readonly IServiceProvider _services;
 
-        public CommandHandler(ServiceProvider services)
+        public CommandHandler(IServiceProvider services)
         {
-            _client = services.GetRequiredService<DiscordSocketClient>();
             _commandService = services.GetRequiredService<CommandService>();
+            _client = services.GetRequiredService<DiscordSocketClient>();            
             _services = services;
 
             HookEvents();
         }
 
-        public async Task InstallCommandsAsync()
+        public async Task InitializeAsync()
         {
             await _commandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), 
             services: _services);
@@ -30,6 +31,7 @@ namespace DiscordBot.Handlers
 
         private void HookEvents()
         {
+            _commandService.CommandExecuted += CommandExecutedAsync;
             _commandService.Log += LogAsync;
             _client.MessageReceived += HandleCommandAsync;
         }
@@ -68,10 +70,20 @@ namespace DiscordBot.Handlers
                     //context.Channel.SendMessageAsync("", false, embed.Result);
                 }
 
+                System.Console.WriteLine("Message from commandHandler");
                 return result;
             
             }
 
+        }
+
+        public async Task CommandExecutedAsync(Optional<CommandInfo> command, 
+        ICommandContext context, IResult result)
+        {
+            if(!command.IsSpecified) return;
+            if(result.IsSuccess) return;
+
+            await context.Channel.SendMessageAsync("Jotakin meni pieleen...");
         }
 
         private Task LogAsync(LogMessage logMessage)

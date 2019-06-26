@@ -1,5 +1,7 @@
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
@@ -17,6 +19,7 @@ namespace DiscordBot.Services
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
+            await _services.GetRequiredService<CommandHandler>().InitializeAsync();
             await Task.Delay(-1);
         }
 
@@ -25,6 +28,8 @@ namespace DiscordBot.Services
             return new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<LoggingService>()
+                .AddSingleton<CommandService>()
+                .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
         }
 
