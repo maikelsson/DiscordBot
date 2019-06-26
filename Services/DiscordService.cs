@@ -27,6 +27,7 @@ namespace DiscordBot.Services
         {
             return new ServiceCollection()
                 .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<AudioService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
