@@ -19,15 +19,22 @@ namespace DiscordBot.Services
         {
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
-            _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
-            _client.Ready += OnReadyAsync;
             _lavalink = _services.GetRequiredService<Lavalink>();
-            //_lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            
+            HookEvents();
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
             await _services.GetRequiredService<CommandHandler>().InitializeAsync();
             await Task.Delay(-1);
+        }
+
+        private void HookEvents()
+        {
+            _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _services.GetRequiredService<CommandService>().Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _client.Ready += OnReadyAsync;
         }
 
         private async Task OnReadyAsync()

@@ -23,13 +23,6 @@ namespace DiscordBot.Services
         public AudioService(Lavalink lavalink)
         {
             _lavalink = lavalink;
-            _lavalink.Log += OnLog;
-        }
-
-        private Task OnLog(LogMessage message)
-        {
-            Console.WriteLine($"{message}");
-            return Task.CompletedTask;
         }
 
         public async Task<Embed> JoinOrPlayAsync(SocketGuildUser user, string query = null)

@@ -3,6 +3,8 @@ using Discord;
 
 namespace DiscordBot.Services
 {
+
+    //Put this to discordservice, this feels off
     public class LoggingService
     {
         public Task OnLog(LogMessage msg)
