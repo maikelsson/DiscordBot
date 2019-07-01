@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Handlers;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 using Victoria;
 
@@ -19,13 +20,29 @@ namespace DiscordBot.Services
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _client.Ready += OnReadyAsync;
             _lavalink = _services.GetRequiredService<Lavalink>();
-            _lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
+            //_lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
             await _services.GetRequiredService<CommandHandler>().InitializeAsync();
             await Task.Delay(-1);
+        }
+
+        private async Task OnReadyAsync()
+        {
+            try
+            {
+                var node = await _lavalink.AddNodeAsync(_client);
+
+                await _client.SetGameAsync("Music!");
+            }
+            
+            catch
+            {
+                await EmbedHandler.CreateBasicEmbed("Error", "Wasn't able to add node :(");
+            }
         }
 
         private ServiceProvider ConfigureServices()

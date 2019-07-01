@@ -10,7 +10,7 @@ namespace DiscordBot.Handlers
             var embed = await Task.Run(() => (new EmbedBuilder()
                 .WithTitle(title))
                 .WithDescription(description)
-                //.WithColor(color)
+                .WithColor(Color.Green)
                 .WithCurrentTimestamp().Build());
 
             return embed;
