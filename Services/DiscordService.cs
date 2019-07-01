@@ -13,6 +13,7 @@ namespace DiscordBot.Services
         private DiscordSocketClient _client;
         private ServiceProvider _services;
         private Lavalink _lavalink;
+        
         public async Task InitializeAsync()
         {
             _services = ConfigureServices();
