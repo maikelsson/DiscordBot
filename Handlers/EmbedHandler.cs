@@ -16,7 +16,7 @@ namespace DiscordBot.Handlers
             return embed;
         }
 
-        public static async Task<Embed> CreateErrorEmbed(string title = "Error!", string desc = "Jotain meni pieleen :(")
+        public static async Task<Embed> CreateErrorEmbed(string title = "Error!", string desc = "Something went wrong here... :(")
         {
             var embed = await Task.Run(() => (new EmbedBuilder()
                 .WithTitle(title)

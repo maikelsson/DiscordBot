@@ -8,6 +8,7 @@ using DiscordBot.Data;
 using DiscordBot.Handlers;
 using Victoria;
 using Victoria.Entities;
+using Victoria.Entities.Enums;
 
 namespace DiscordBot.Services
 {
@@ -59,21 +60,49 @@ namespace DiscordBot.Services
                 return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
             }
             
+            // If something goes wrong, gives error info
             catch(InvalidOperationException ex)
             {
                 return await EmbedHandler.CreateErrorEmbed("Music, Leave", ex.ToString());
             }
         }
 
-        /* public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query = null)
+         public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query = "Darude Sandstorm")
         {
-            var player = _lavalink.DefaultNode.GetPlayer(user.Guild.Id);
 
-            LavaTrack track;
-            var search = await _lavalink.DefaultNode.SearchYouTubeAsync(query);
-            track = search.Tracks.FirstOrDefault();
-            await player.PlayAsync(track);
+            if(user.VoiceChannel == null)
+            {
+                return await EmbedHandler.CreateErrorEmbed("Play, Music", "You must be in voice channel in order to use this command!");
+            }
 
-        }*/
+            else
+            {
+                try
+                {
+                    var player = _lavalink.DefaultNode.GetPlayer(user.Guild.Id);
+                    LavaTrack track;
+                    var search = await _lavalink.DefaultNode.SearchYouTubeAsync(query);
+
+                    if(search.LoadResultType == LoadResultType.NoMatches)
+                    {
+                        return await EmbedHandler.CreateErrorEmbed("Oh shieet", $"Couldn't find anything in youtube that matches the {query}...");
+                    }
+                    
+                    track = search.Tracks.FirstOrDefault();
+                    await player.PlayAsync(track);
+                    await player.SetVolumeAsync(100);
+
+
+                    return await EmbedHandler.CreateBasicEmbed("Music", $"Now Playing: {track.Title}!");
+                }   
+
+                catch(Exception ex)
+                {
+                    return await EmbedHandler.CreateErrorEmbed("Music, Play", $"{ex.ToString()}");
+                }
+            }
+            
+
+        }
     }
 }
