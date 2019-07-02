@@ -14,12 +14,14 @@ namespace DiscordBot.Services
         private DiscordSocketClient _client;
         private ServiceProvider _services;
         private Lavalink _lavalink;
+        private LoggingService _log;
         
         public async Task InitializeAsync()
         {
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _lavalink = _services.GetRequiredService<Lavalink>();
+            _log = _services.GetRequiredService<LoggingService>();
             
             HookEvents();
 
@@ -31,9 +33,9 @@ namespace DiscordBot.Services
 
         private void HookEvents()
         {
-            _client.Log += _services.GetRequiredService<LoggingService>().OnLog;
-            _lavalink.Log += _services.GetRequiredService<LoggingService>().OnLog;
-            _services.GetRequiredService<CommandService>().Log += _services.GetRequiredService<LoggingService>().OnLog;
+            _client.Log += _log.OnLog;
+            _lavalink.Log += _log.OnLog;
+            _services.GetRequiredService<CommandService>().Log += _log.OnLog;
             _client.Ready += OnReadyAsync;
         }
 

@@ -12,7 +12,14 @@ namespace DiscordBot.Modules
         [Command("Join")]
         public async Task JoinChannelAsync()
         {
-            await ReplyAsync("", false, await _service.JoinOrPlayAsync(
+            await ReplyAsync("", false, await _service.JoinChannelAsync(
+                (SocketGuildUser)Context.User));
+        }
+
+        [Command("Kick")]
+        public async Task LeaveChannelAsync()
+        {
+            await ReplyAsync("", false, await _service.LeaveChannelAsync(
                 (SocketGuildUser)Context.User));
         }
         
