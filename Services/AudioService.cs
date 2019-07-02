@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -27,22 +26,47 @@ namespace DiscordBot.Services
             _lavalink = lavalink;
         }
 
-        public async Task<Embed> JoinChannelAsync(SocketGuildUser user, string query = null)
+        public async Task<Embed> JoinChannelAsync(SocketGuildUser user, IChannel channel, ulong id)
         {
             if(user.VoiceChannel == null)
             {
-                return await EmbedHandler.CreateErrorEmbed();
+                return await EmbedHandler.CreateErrorEmbed("Error", $"You must be in a voicechannel sir {user.Nickname}!");
             }
 
-            if(query == null)
+            await _lavalink.DefaultNode.ConnectAsync(user.VoiceChannel);
+            Options.TryAdd(user.Guild.Id, new AudioOptions
             {
-                await _lavalink.DefaultNode.ConnectAsync(user.VoiceChannel);
-                Options.TryAdd(user.Guild.Id, new AudioOptions
-                {
-                    Summoner = user
-                });                
-            }
+                Summoner = user
+            });                
 
+            return await EmbedHandler.CreateBasicEmbed("Succes", $"Bot joined channel {user.VoiceChannel.Name}!");
+        }
+
+        public async Task<Embed> LeaveChannelAsync(ulong guildID)
+        {
+            try
+            {
+                var player = _lavalink.DefaultNode.GetPlayer(guildID);
+
+                if(player.IsPlaying)
+                {
+                    await player.StopAsync();
+                }
+
+                //Leave voice channel
+                var channelName = player.VoiceChannel.Name;
+                await _lavalink.DefaultNode.DisconnectAsync(guildID);
+                return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
+            }
+            
+            catch(InvalidOperationException ex)
+            {
+                return await EmbedHandler.CreateErrorEmbed("Music, Leave", ex.ToString());
+            }
+        }
+
+        /* public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query = null)
+        {
             var player = _lavalink.DefaultNode.GetPlayer(user.Guild.Id);
 
             LavaTrack track;
@@ -50,20 +74,6 @@ namespace DiscordBot.Services
             track = search.Tracks.FirstOrDefault();
             await player.PlayAsync(track);
 
-            return await EmbedHandler.CreateBasicEmbed("Succes", $"Bot joined channel {user.VoiceChannel.Name}!");
-        }
-
-        public async Task<Embed> LeaveChannelAsync(SocketGuildUser user)
-        {
-            var node = _lavalink.DefaultNode;
-            if(!node.IsConnected || user.VoiceChannel != null)
-            {
-                return await EmbedHandler.CreateErrorEmbed();
-            }
-
-            await node.DisconnectAsync(user.Guild.Id);
-
-            return await EmbedHandler.CreateBasicEmbed("Leaving..", "Bot has left the channel..");
-        }
+        }*/
     }
 }

@@ -10,17 +10,23 @@ namespace DiscordBot.Modules
         public AudioService _service { get; set; }
 
         [Command("Join")]
-        public async Task JoinChannelAsync()
+        public async Task Join()
         {
             await ReplyAsync("", false, await _service.JoinChannelAsync(
-                (SocketGuildUser)Context.User));
+                (SocketGuildUser)Context.User, Context.Channel, Context.Guild.Id));
+        }
+
+        [Command("Play")]
+        public async Task Play()
+        {
+            
         }
 
         [Command("Kick")]
-        public async Task LeaveChannelAsync()
+        public async Task Leave()
         {
             await ReplyAsync("", false, await _service.LeaveChannelAsync(
-                (SocketGuildUser)Context.User));
+                Context.Guild.Id));
         }
         
     }
