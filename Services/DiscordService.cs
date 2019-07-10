@@ -15,14 +15,14 @@ namespace DiscordBot.Services
         private ServiceProvider _services;
         private Lavalink _lavalink;
         private LoggingService _log;
-        
+
         public async Task InitializeAsync()
         {
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _lavalink = _services.GetRequiredService<Lavalink>();
             _log = _services.GetRequiredService<LoggingService>();
-            
+
             HookEvents();
 
             await LogClient(_client, TokenType.Bot);
@@ -47,7 +47,7 @@ namespace DiscordBot.Services
 
                 await _client.SetGameAsync("Music!");
             }
-            
+
             catch
             {
                 await EmbedHandler.CreateBasicEmbed("Error", "Wasn't able to add node :(");

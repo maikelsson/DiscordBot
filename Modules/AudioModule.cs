@@ -20,7 +20,7 @@ namespace DiscordBot.Modules
         public async Task Play([Remainder] string search)
         {
             await ReplyAsync("", false, await _service.PlaySongAsync(
-            (SocketGuildUser)Context.User, search));
+                (SocketGuildUser)Context.User, search));
         }
 
         [Command("Kick")]
