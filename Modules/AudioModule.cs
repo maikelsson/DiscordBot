@@ -30,5 +30,17 @@ namespace DiscordBot.Modules
                 Context.Guild.Id));
         }
         
+        [Command("Pause")]
+        public async Task Pause()
+        {
+            await ReplyAsync("", false, await _service.PauseOrContinueSongAsync(
+                (SocketGuildUser)Context.User));
+        }
+
+        [Command("Skip")]
+        public async Task Skip()
+        {
+            await ReplyAsync("", false, await _service.SkipSongAsync(Context.Guild.Id));
+        }
     }
 }

@@ -70,7 +70,7 @@ namespace DiscordBot.Handlers
                     //context.Channel.SendMessageAsync("", false, embed.Result);
                 }
 
-                System.Console.WriteLine("Message from commandHandler");
+                Console.WriteLine("Message from commandHandler");
                 return result;
             
             }

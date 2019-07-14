@@ -27,16 +27,16 @@ namespace DiscordBot.Services
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
-            await _services.GetRequiredService<CommandHandler>().InitializeAsync();
+            await _services.GetRequiredService<CommandHandler>().InitializeAsync();  
             await Task.Delay(-1);
         }
 
         private void HookEvents()
         {
+            _services.GetRequiredService<CommandService>().Log += _log.OnLog;
             _client.Log += _log.OnLog;
             _lavalink.Log += _log.OnLog;
-            _services.GetRequiredService<CommandService>().Log += _log.OnLog;
-            _client.Ready += OnReadyAsync;
+            _client.Ready += OnReadyAsync;          
         }
 
         private async Task OnReadyAsync()
@@ -44,7 +44,7 @@ namespace DiscordBot.Services
             try
             {
                 var node = await _lavalink.AddNodeAsync(_client);
-
+                node.TrackFinished += _services.GetService<AudioService>().OnFinished;
                 await _client.SetGameAsync("Music!");
             }
 
