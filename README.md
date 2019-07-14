@@ -7,3 +7,4 @@ TODO:
 
 3. More commands and some comments to code.
 4. Test cases!
+5. Make LoggingService better
