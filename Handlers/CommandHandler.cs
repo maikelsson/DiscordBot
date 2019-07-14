@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordBot.Handlers
@@ -32,7 +33,6 @@ namespace DiscordBot.Handlers
         private void HookEvents()
         {
             _commandService.CommandExecuted += CommandExecutedAsync;
-            _commandService.Log += LogAsync;
             _client.MessageReceived += HandleCommandAsync;
         }
 
@@ -70,7 +70,6 @@ namespace DiscordBot.Handlers
                     //context.Channel.SendMessageAsync("", false, embed.Result);
                 }
 
-                Console.WriteLine("Message from commandHandler");
                 return result;
             
             }
@@ -86,10 +85,5 @@ namespace DiscordBot.Handlers
             await context.Channel.SendMessageAsync("Jotakin meni pieleen...");
         }
 
-        private Task LogAsync(LogMessage logMessage)
-        {
-            System.Console.WriteLine(logMessage.ToString() + "from commandhanler");
-            return Task.CompletedTask;
-        }
     }
 }

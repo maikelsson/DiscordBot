@@ -3,9 +3,9 @@ using Discord;
 
 namespace DiscordBot.Services
 {
-    public class LoggingService
+    public static class LoggingService
     {
-        public Task OnLog(LogMessage msg)
+        public static Task OnLog(LogMessage msg)
         {
             System.Console.WriteLine(msg.ToString());
             return Task.CompletedTask;

@@ -129,12 +129,12 @@ namespace DiscordBot.Services
                     if (player.IsPaused)
                     {
                         await player.PauseAsync();
-                        return await EmbedHandler.CreateBasicEmbed("Music", $"Continued: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position}");
+                        return await EmbedHandler.CreateBasicEmbed("Music", $"Continued: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
                     }
 
                     //Pause song
                     await player.PauseAsync();
-                    return await EmbedHandler.CreateBasicEmbed("Music", $"Paused: {player.CurrentTrack.Title}\n{player.CurrentTrack.Position}");
+                    return await EmbedHandler.CreateBasicEmbed("Music", $"Paused: {player.CurrentTrack.Title}\n{player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
                 }
 
                 catch(Exception ex)
