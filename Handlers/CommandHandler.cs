@@ -71,7 +71,7 @@ namespace DiscordBot.Handlers
                 }
 
                 //hmmmm
-                _ = LoggingService.LogInformationAsync(message.Source.ToString(), "");
+                //LoggingService.LogInformationAsync(message.Source.ToString(), "");
                 return result;
             
             }
@@ -84,7 +84,7 @@ namespace DiscordBot.Handlers
             if(!command.IsSpecified) return;
             if(result.IsSuccess) return;
 
-            await context.Channel.SendMessageAsync("Jotakin meni pieleen...");
+            await LoggingService.LogInformationAsync("commandHandler", "command executed");
         }
 
     }

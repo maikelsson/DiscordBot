@@ -41,7 +41,7 @@ namespace DiscordBot.Services
                 Summoner = user
             });
 
-            await LoggingService.LogInformationAsync("Node", "Bot connected to voice channel");
+            await LoggingService.LogInformationAsync("Node", $"Bot connected to voice channel: {user.VoiceChannel.Name}");
             return await EmbedHandler.CreateBasicEmbed("Success", $"Bot joined channel {user.VoiceChannel.Name}!");
         }
 
@@ -57,7 +57,7 @@ namespace DiscordBot.Services
                 //Leave voice channel
                 var channelName = player.VoiceChannel.Name;
                 await _lavalink.DefaultNode.DisconnectAsync(guildID);
-                await LoggingService.LogInformationAsync("Node", "Bot disconnected from voice channel");
+                await LoggingService.LogInformationAsync("Node", $"Bot disconnected from voice channel: {player.VoiceChannel.Name}");
                 return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
             }
 
