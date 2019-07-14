@@ -17,6 +17,8 @@ namespace DiscordBot.Services
 
         public async Task InitializeAsync()
         {
+            await LoggingService.WelcomeMessageAsync(); 
+
             _services = ConfigureServices();
             _client = _services.GetRequiredService<DiscordSocketClient>();
             _lavalink = _services.GetRequiredService<Lavalink>();

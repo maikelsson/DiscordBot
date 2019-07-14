@@ -70,6 +70,8 @@ namespace DiscordBot.Handlers
                     //context.Channel.SendMessageAsync("", false, embed.Result);
                 }
 
+                //hmmmm
+                _ = LoggingService.LogInformationAsync(message.Source.ToString(), "");
                 return result;
             
             }

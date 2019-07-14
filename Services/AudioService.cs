@@ -39,8 +39,9 @@ namespace DiscordBot.Services
             Options.TryAdd(user.Guild.Id, new AudioOptions
             {
                 Summoner = user
-            });                
+            });
 
+            await LoggingService.LogInformationAsync("Node", "Bot connected to voice channel");
             return await EmbedHandler.CreateBasicEmbed("Success", $"Bot joined channel {user.VoiceChannel.Name}!");
         }
 
@@ -50,22 +51,22 @@ namespace DiscordBot.Services
             {
                 var player = _lavalink.DefaultNode.GetPlayer(guildID);
 
-                if(player.IsPlaying)
-                {
+                if(player.IsPlaying || player.IsPaused)
                     await player.StopAsync();
-                }
 
                 //Leave voice channel
                 var channelName = player.VoiceChannel.Name;
                 await _lavalink.DefaultNode.DisconnectAsync(guildID);
+                await LoggingService.LogInformationAsync("Node", "Bot disconnected from voice channel");
                 return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
             }
-            
+
             // If something goes wrong, gives error info
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return await EmbedHandler.CreateErrorEmbed("Music, Leave", ex.ToString());
             }
+
         }
 
          public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query)
@@ -100,6 +101,7 @@ namespace DiscordBot.Services
                     // Was not playing anything, so we play requested track
                     await player.PlayAsync(track);
                     await player.SetVolumeAsync(100);
+                    await LoggingService.LogInformationAsync("Node", $"Now playing {track.Title}, {track.Uri}");
                     return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Now Playing: {track.Title} \nDuration: {track.Length}");
 
                 }   
@@ -134,7 +136,7 @@ namespace DiscordBot.Services
 
                     //Pause song
                     await player.PauseAsync();
-                    return await EmbedHandler.CreateBasicEmbed("Music", $"Paused: {player.CurrentTrack.Title}\n{player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
+                    return await EmbedHandler.CreateBasicEmbed("Music", $"Paused: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
                 }
 
                 catch(Exception ex)
