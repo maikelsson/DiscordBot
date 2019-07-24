@@ -146,6 +146,7 @@ namespace DiscordBot.Services
             }
         }
 
+        //show next song
         public async Task<Embed> SkipSongAsync(ulong guildId)
         {
             try
