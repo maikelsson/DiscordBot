@@ -25,7 +25,6 @@ namespace DiscordBot.Services
         public AudioService(Lavalink lavalink)
         {
             _lavalink = lavalink;
-            
         }
 
         public async Task<Embed> JoinChannelAsync(SocketGuildUser user, IChannel channel, ulong id)
@@ -42,7 +41,7 @@ namespace DiscordBot.Services
             });
 
             await LoggingService.LogInformationAsync("Node", $"Bot connected to voice channel: {user.VoiceChannel.Name}");
-            return await EmbedHandler.CreateBasicEmbed("Success", $"Bot joined channel {user.VoiceChannel.Name}!");
+            return await EmbedHandler.CreateBasicEmbed("Success", $"AmarilloBot joined channel {user.VoiceChannel.Name}!");
         }
 
         public async Task<Embed> LeaveChannelAsync(ulong guildID)
@@ -204,6 +203,28 @@ namespace DiscordBot.Services
             {
                 await player.PlayAsync(nextTrack);
                 await player.TextChannel.SendMessageAsync("", false, await EmbedHandler.CreateBasicEmbed("Now Playing", $"{nextTrack.Title}"));
+            }
+        }
+
+        //Blueprint for something useful maybe..
+        public async Task OnUserConnectedOrDisconnected(LavaPlayer _player)
+        {
+            var player = _player;
+            if(player.VoiceChannel == null)
+            {
+                return;
+            }
+
+            else
+            {
+                try
+                {
+                    await player.StopAsync();
+                }
+                catch(Exception ex)
+                {
+                    await LoggingService.LogCriticalAsync("LavaPlayer", "Something went wrong.. OnUserConnectedOrDisconnected", ex);
+                }
             }
         }
 

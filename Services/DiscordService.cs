@@ -45,7 +45,7 @@ namespace DiscordBot.Services
             {
                 var node = await _lavalink.AddNodeAsync(_client);
                 node.TrackFinished += _services.GetService<AudioService>().OnFinished;
-                await _client.SetGameAsync("Music!");
+                await _client.SetGameAsync($"Music! Now playing:");
             }
 
             catch
@@ -71,5 +71,7 @@ namespace DiscordBot.Services
             //Hide the token pls
             await client.LoginAsync(type, "NTUyNzYxNjIwNTUyNjEzODg4.XQs-Zg.i9hZLYFKVLHeJK_k0L-ii3eaAIU");
         }
+
+        
     }
 }
