@@ -7,11 +7,13 @@ TODO:
 
 3. More commands and add some comments
 4. Test cases!
+5. 
 
 
 ##Buglist
 
 1. If the bot is too long paused and you try to use it after long break etc. 20min paused
     it crashes or the.. so solution is auto timeout after 5min when not used or paused or something like it
+		- Maybe make listener for StopAsync method and make function that will disconnect bot if not used by users..
 
 2. 

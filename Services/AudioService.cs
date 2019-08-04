@@ -22,6 +22,9 @@ namespace DiscordBot.Services
         private ConcurrentDictionary<ulong, AudioOptions> Options
             => _lazyOptions.Value;
 
+        //To keep track of the current guildID
+        public ulong currentGuild { get; private set; }
+
         public AudioService(Lavalink lavalink)
         {
             _lavalink = lavalink;
@@ -40,7 +43,10 @@ namespace DiscordBot.Services
                 Summoner = user
             });
 
-            await LoggingService.LogInformationAsync("Node", $"Bot connected to voice channel: {user.VoiceChannel.Name}");
+            currentGuild = id;
+
+            await LoggingService.LogInformationAsync("Node", $"Bot connected to voice channel: {user.VoiceChannel.Name} + {currentGuild}");
+            
             return await EmbedHandler.CreateBasicEmbed("Success", $"AmarilloBot joined channel {user.VoiceChannel.Name}!");
         }
 
@@ -56,7 +62,7 @@ namespace DiscordBot.Services
                 //Leave voice channel
                 var channelName = player.VoiceChannel.Name;
                 await _lavalink.DefaultNode.DisconnectAsync(guildID);
-                await LoggingService.LogInformationAsync("Node", $"Bot disconnected from voice channel: {player.VoiceChannel.Name}");
+                await LoggingService.LogInformationAsync("Node", $"Bot disconnected from voice channel: {player.VoiceChannel.Name} + {currentGuild}");
                 return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
             }
 
@@ -94,7 +100,7 @@ namespace DiscordBot.Services
                     if(player.CurrentTrack != null && player.IsPlaying || player.IsPaused)
                     {
                         player.Queue.Enqueue(track);
-                        return await EmbedHandler.CreateBasicEmbed("Music", $"Added song {track.Title} to queue \nPosition: {player.Queue.Count}\nDuration: {track.Length}");
+                        return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Added song {track.Title} to queue \nPosition: {player.Queue.Count}\nDuration: {track.Length}");
                     }
 
                     // Was not playing anything, so we play requested track
@@ -115,6 +121,7 @@ namespace DiscordBot.Services
 
         public async Task<Embed> PauseOrContinueSongAsync(SocketGuildUser user)
         {
+
             if (user.VoiceChannel == null)
             {
                 return await EmbedHandler.CreateErrorEmbed("Music, Pause", "Must be in voice channel in order to use this command!");
@@ -130,12 +137,13 @@ namespace DiscordBot.Services
                     if (player.IsPaused)
                     {
                         await player.PauseAsync();
-                        return await EmbedHandler.CreateBasicEmbed("Music", $"Continued: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
+                        return await EmbedHandler.CreateBasicEmbed("Music, Pause", $"Continued: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
                     }
 
                     //Pause song
                     await player.PauseAsync();
-                    return await EmbedHandler.CreateBasicEmbed("Music", $"Paused: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
+
+                    return await EmbedHandler.CreateBasicEmbed("Music, Pause", $"Paused: {player.CurrentTrack.Title}\nPosition: {player.CurrentTrack.Position.ToString(@"hh\:mm\:ss")}");
                 }
 
                 catch(Exception ex)
@@ -205,6 +213,47 @@ namespace DiscordBot.Services
                 await player.PlayAsync(nextTrack);
                 await player.TextChannel.SendMessageAsync("", false, await EmbedHandler.CreateBasicEmbed("Now Playing", $"{nextTrack.Title}"));
             }
+        }
+
+        public async Task OnUpdated(LavaPlayer player, LavaTrack track, TimeSpan timeSpan)
+        {
+            await PeriodicCheckAsync(TimeSpan.FromSeconds(5));
+            await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate} + {DateTime.Now}");
+        }
+
+        //Can be used to run methods by defined interval
+        public Task PeriodicCheckAsync(TimeSpan interval)
+        {
+            while (true)
+            {
+                CheckForPlayerLastUpdate();
+                Task.Delay(interval);
+            }
+        }
+
+        private async Task CheckForPlayerLastUpdate()
+        {
+            var player = _lavalink.DefaultNode.GetPlayer(currentGuild);
+
+            if (player == null)
+            {
+                LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
+            }
+
+
+            else
+            {
+
+                TimeSpan timeSpan = DateTime.Now.Subtract(player.LastUpdate.Date);
+
+                LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
+
+                if (timeSpan < TimeSpan.FromMinutes(1))
+                {
+                    _lavalink.DefaultNode.DisconnectAsync(currentGuild);
+                }
+            }
+
         }
 
         //Blueprint for something useful maybe..

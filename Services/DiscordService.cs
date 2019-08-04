@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Victoria;
+using Victoria.Entities;
 
 namespace DiscordBot.Services
 {
@@ -27,7 +28,7 @@ namespace DiscordBot.Services
 
             await LogClient(_client, TokenType.Bot);
             await _client.StartAsync();
-            await _services.GetRequiredService<CommandHandler>().InitializeAsync();  
+            await _services.GetRequiredService<CommandHandler>().InitializeAsync();
             await Task.Delay(-1);
         }
 
@@ -36,7 +37,7 @@ namespace DiscordBot.Services
             _services.GetRequiredService<CommandService>().Log += LoggingService.OnLog;
             _client.Log += LoggingService.OnLog;
             _lavalink.Log += LoggingService.OnLog;
-            _client.Ready += OnReadyAsync;          
+            _client.Ready += OnReadyAsync;
         }
 
         private async Task OnReadyAsync()
@@ -45,6 +46,7 @@ namespace DiscordBot.Services
             {
                 var node = await _lavalink.AddNodeAsync(_client);
                 node.TrackFinished += _services.GetService<AudioService>().OnFinished;
+                node.PlayerUpdated += _services.GetService<AudioService>().OnUpdated;
                 await _client.SetGameAsync($"DJ KOPPI");
             }
 
