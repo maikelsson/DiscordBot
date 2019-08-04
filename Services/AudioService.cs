@@ -28,6 +28,7 @@ namespace DiscordBot.Services
         public AudioService(Lavalink lavalink)
         {
             _lavalink = lavalink;
+
         }
 
         public async Task<Embed> JoinChannelAsync(SocketGuildUser user, IChannel channel, ulong id)
@@ -217,17 +218,16 @@ namespace DiscordBot.Services
 
         public async Task OnUpdated(LavaPlayer player, LavaTrack track, TimeSpan timeSpan)
         {
-            await PeriodicCheckAsync(TimeSpan.FromSeconds(5));
             await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate} + {DateTime.Now}");
         }
 
         //Can be used to run methods by defined interval
-        public Task PeriodicCheckAsync(TimeSpan interval)
+        public async Task PeriodicCheckAsync(TimeSpan interval)
         {
             while (true)
             {
-                CheckForPlayerLastUpdate();
-                Task.Delay(interval);
+                await CheckForPlayerLastUpdate();
+                await Task.Delay(interval);
             }
         }
 
@@ -237,7 +237,8 @@ namespace DiscordBot.Services
 
             if (player == null)
             {
-                LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
+                await LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
+                return;
             }
 
 
@@ -246,11 +247,11 @@ namespace DiscordBot.Services
 
                 TimeSpan timeSpan = DateTime.Now.Subtract(player.LastUpdate.Date);
 
-                LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
+                await LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
 
-                if (timeSpan < TimeSpan.FromMinutes(1))
+                if (timeSpan >= TimeSpan.FromMinutes(1))
                 {
-                    _lavalink.DefaultNode.DisconnectAsync(currentGuild);
+                    await _lavalink.DefaultNode.DisconnectAsync(currentGuild);
                 }
             }
 
