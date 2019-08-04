@@ -117,7 +117,7 @@ namespace DiscordBot.Services
         {
             if (user.VoiceChannel == null)
             {
-                return await EmbedHandler.CreateErrorEmbed("Music, Pause", "Bot must be in voice channel in order to use this command!");
+                return await EmbedHandler.CreateErrorEmbed("Music, Pause", "Must be in voice channel in order to use this command!");
             }
 
             else
@@ -167,10 +167,11 @@ namespace DiscordBot.Services
                     try
                     {
                         var currentTrack = player.CurrentTrack;
-                        
+                        var nextTrack = player.Queue.Items.ElementAt(0);
+
                         //Since SkipAsync() isn't working, this seems to be only option to skip track in version 3.0..
                         await player.SeekAsync(currentTrack.Length);
-                        return await EmbedHandler.CreateBasicEmbed("Music, Skip", $"Succesfully skipped {currentTrack.Title}");
+                        return await EmbedHandler.CreateBasicEmbed("Music, Skip", $"Succesfully skipped {currentTrack.Title},\nNext track: {nextTrack.Title}\nDuration: {nextTrack.Length}");
                     }
                     catch(Exception ex)
                     {

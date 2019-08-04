@@ -45,7 +45,7 @@ namespace DiscordBot.Services
             {
                 var node = await _lavalink.AddNodeAsync(_client);
                 node.TrackFinished += _services.GetService<AudioService>().OnFinished;
-                await _client.SetGameAsync($"Music! Now playing:");
+                await _client.SetGameAsync($"DJ KOPPI");
             }
 
             catch
