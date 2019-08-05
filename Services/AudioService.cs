@@ -15,6 +15,7 @@ namespace DiscordBot.Services
     public class AudioService
     {
         private Lavalink _lavalink;
+        private DiscordSocketClient _client;
 
         private readonly Lazy<ConcurrentDictionary<ulong, AudioOptions>> _lazyOptions
             = new Lazy<ConcurrentDictionary<ulong, AudioOptions>>();
@@ -25,10 +26,10 @@ namespace DiscordBot.Services
         //To keep track of the current guildID
         public ulong currentGuild { get; private set; }
 
-        public AudioService(Lavalink lavalink)
+        public AudioService(Lavalink lavalink, DiscordSocketClient client)
         {
             _lavalink = lavalink;
-
+            _client = client;
         }
 
         public async Task<Embed> JoinChannelAsync(SocketGuildUser user, IChannel channel, ulong id)
@@ -48,9 +49,14 @@ namespace DiscordBot.Services
 
             await LoggingService.LogInformationAsync("Node", $"Bot connected to voice channel: {user.VoiceChannel.Name} + {currentGuild}");
             
-            return await EmbedHandler.CreateBasicEmbed("Success", $"AmarilloBot joined channel {user.VoiceChannel.Name}!");
+            return await EmbedHandler.CreateBasicEmbed(":sun_with_face::sun_with_face::sun_with_face:", $"AmarilloBot joined channel {user.VoiceChannel.Name}!");
         }
 
+        /// <summary>
+        /// This method is used to kick bot from voicechannel
+        /// </summary>
+        /// <param name="guildID"></param>
+        /// <returns></returns>
         public async Task<Embed> LeaveChannelAsync(ulong guildID)
         {
             try
@@ -63,8 +69,9 @@ namespace DiscordBot.Services
                 //Leave voice channel
                 var channelName = player.VoiceChannel.Name;
                 await _lavalink.DefaultNode.DisconnectAsync(guildID);
+                await _client.SetGameAsync("Tiskillä tilaamassa juomia...");
                 await LoggingService.LogInformationAsync("Node", $"Bot disconnected from voice channel: {player.VoiceChannel.Name} + {currentGuild}");
-                return await EmbedHandler.CreateBasicEmbed($"Leaving channel: {channelName}", "Invite me again sometime :)");
+                return await EmbedHandler.CreateBasicEmbed($"Music, Leave", $"Leaving channel {channelName}");
             }
 
             // If something goes wrong, gives error info
@@ -218,7 +225,12 @@ namespace DiscordBot.Services
 
         public async Task OnUpdated(LavaPlayer player, LavaTrack track, TimeSpan timeSpan)
         {
-            await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate} + {DateTime.Now}");
+            if(player.IsPlaying || player.IsPaused)
+            {
+                await _client.SetGameAsync($"{track.Title}");
+            }
+
+            await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate}");
         }
 
         #region Ideas..

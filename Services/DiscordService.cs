@@ -47,7 +47,6 @@ namespace DiscordBot.Services
                 var node = await _lavalink.AddNodeAsync(_client);
                 node.TrackFinished += _services.GetService<AudioService>().OnFinished;
                 node.PlayerUpdated += _services.GetService<AudioService>().OnUpdated;
-                await _client.SetGameAsync($"DJ KOPPI");
             }
 
             catch
@@ -62,6 +61,7 @@ namespace DiscordBot.Services
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<Lavalink>()
                 .AddSingleton<AudioService>()
+                .AddSingleton<BotService>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
