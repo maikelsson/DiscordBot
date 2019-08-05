@@ -221,41 +221,50 @@ namespace DiscordBot.Services
             await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate} + {DateTime.Now}");
         }
 
+        #region Ideas..
+
         //Can be used to run methods by defined interval
-        public async Task PeriodicCheckAsync(TimeSpan interval)
-        {
-            while (true)
-            {
-                await CheckForPlayerLastUpdate();
-                await Task.Delay(interval);
-            }
-        }
 
-        private async Task CheckForPlayerLastUpdate()
-        {
-            var player = _lavalink.DefaultNode.GetPlayer(currentGuild);
+        /// <summary>
+        /// Something is wrong here, need to look up more.. 
+        /// </summary>
+        /// <param name="_player"></param>
+        /// <returns></returns>
+        /// 
+        //public async Task PeriodicCheckAsync(TimeSpan interval)
+        //{
+        //    while (true)
+        //    {
+        //        await CheckForPlayerLastUpdate();
+        //        await Task.Delay(interval);
+        //    }
+        //}
 
-            if (player == null)
-            {
-                await LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
-                return;
-            }
+        //private async Task CheckForPlayerLastUpdate()
+        //{
+        //    var player = _lavalink.DefaultNode.GetPlayer(currentGuild);
+
+        //    if (player == null)
+        //    {
+        //        await LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
+        //        return;
+        //    }
 
 
-            else
-            {
+        //    else
+        //    {
 
-                TimeSpan timeSpan = DateTime.Now.Subtract(player.LastUpdate.Date);
+        //        TimeSpan timeSpan = DateTime.Now.Subtract(player.LastUpdate.Date);
 
-                await LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
+        //        await LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
 
-                if (timeSpan >= TimeSpan.FromMinutes(1))
-                {
-                    await _lavalink.DefaultNode.DisconnectAsync(currentGuild);
-                }
-            }
+        //        if (timeSpan >= TimeSpan.FromMinutes(1))
+        //        {
+        //            await _lavalink.DefaultNode.DisconnectAsync(currentGuild);
+        //        }
+        //    }
 
-        }
+        //}
 
         //Blueprint for something useful maybe..
         public async Task OnUserConnectedOrDisconnected(LavaPlayer _player)
@@ -278,6 +287,8 @@ namespace DiscordBot.Services
                 }
             }
         }
+
+        #endregion
 
     }
 }
