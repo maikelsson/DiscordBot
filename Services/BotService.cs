@@ -7,15 +7,12 @@ using Victoria;
 
 namespace DiscordBot.Services
 {
-    public class BotService
+    public static class BotService
     {
-        private DiscordSocketClient _client;
-        private Lavalink _lavalink;
 
-        public BotService(DiscordSocketClient client, Lavalink lavalink)
+        public static async Task SetBotStatus(DiscordSocketClient client, string statusText)
         {
-            _client = client;
-            _lavalink = lavalink;
+            await client.SetGameAsync(statusText);
         }
 
         //private async Task SetGameStatus(DiscordSocketClient client, Lavalink player)

@@ -69,7 +69,7 @@ namespace DiscordBot.Services
                 //Leave voice channel
                 var channelName = player.VoiceChannel.Name;
                 await _lavalink.DefaultNode.DisconnectAsync(guildID);
-                await _client.SetGameAsync("Tiskillä tilaamassa juomia...");
+                await BotService.SetBotStatus(_client, "Ordering beer..");
                 await LoggingService.LogInformationAsync("Node", $"Bot disconnected from voice channel: {player.VoiceChannel.Name} + {currentGuild}");
                 return await EmbedHandler.CreateBasicEmbed($"Music, Leave", $"Leaving channel {channelName}");
             }
@@ -213,6 +213,7 @@ namespace DiscordBot.Services
             if(nextTrack == null)
             {
                 await player.StopAsync();
+                await BotService.SetBotStatus(_client, "Paused");
                 await player.TextChannel.SendMessageAsync("", false, await EmbedHandler.CreateBasicEmbed("Music", $"Paused, no songs in queue"));
             }
 
@@ -227,7 +228,7 @@ namespace DiscordBot.Services
         {
             if(player.IsPlaying || player.IsPaused)
             {
-                await _client.SetGameAsync($"{track.Title}");
+                await BotService.SetBotStatus(_client, $"{track.Title}");
             }
 
             await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate}");

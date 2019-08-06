@@ -61,7 +61,6 @@ namespace DiscordBot.Services
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<Lavalink>()
                 .AddSingleton<AudioService>()
-                .AddSingleton<BotService>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
