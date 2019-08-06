@@ -10,6 +10,7 @@ namespace DiscordBot.Modules
         public AudioService _service { get; set; }
 
         [Command("Join")]
+        [Alias("Liity", "j")]
         public async Task Join()
         {
             await ReplyAsync("", false, await _service.JoinChannelAsync(
@@ -17,13 +18,15 @@ namespace DiscordBot.Modules
         }
 
         [Command("Play")]
-        public async Task Play([Remainder] string search)
+        [Alias("Soita", "Soitaparanoid", "paranoid")]
+        public async Task Play([Remainder] string search = "Paranoid")
         {
             await ReplyAsync("", false, await _service.PlaySongAsync(
                 (SocketGuildUser)Context.User, search));
         }
 
         [Command("Kick")]
+        [Alias("meevittuun", "pois")]
         public async Task Leave()
         {
             await ReplyAsync("", false, await _service.LeaveChannelAsync(
@@ -31,6 +34,7 @@ namespace DiscordBot.Modules
         }
         
         [Command("Pause")]
+        [Alias("Tauko", "paussi")]
         public async Task Pause()
         {
             await ReplyAsync("", false, await _service.PauseOrContinueSongAsync(
@@ -38,12 +42,14 @@ namespace DiscordBot.Modules
         }
 
         [Command("Skip")]
+        [Alias("VMP", "toxic")]
         public async Task Skip()
         {
             await ReplyAsync("", false, await _service.SkipSongAsync(Context.Guild.Id));
         }
 
         [Command("List")]
+        [Alias("Lista", "biisit")]
         public async Task List()
         {
             await ReplyAsync("", false, await _service.ListSongsAsync(Context.Guild.Id)); 

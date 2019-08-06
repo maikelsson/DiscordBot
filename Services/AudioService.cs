@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Data;
 using DiscordBot.Handlers;
-using DiscordBot.Modules;
 using Victoria;
 using Victoria.Entities;
 using Victoria.Entities.Enums;
@@ -55,11 +53,7 @@ namespace DiscordBot.Services
             return await EmbedHandler.CreateBasicEmbed(":sun_with_face::sun_with_face::sun_with_face:", $"AmarilloBot joined channel {user.VoiceChannel.Name}!", Color.Green);
         }
 
-        /// <summary>
-        /// This method is used to kick bot from voicechannel
-        /// </summary>
-        /// <param name="guildID"></param>
-        /// <returns></returns>
+        //!kick, To kick bot from voice channel, still needs some autokick feature to get rid of some bugs **TODO**
         public async Task<Embed> LeaveChannelAsync(ulong guildID)
         {
             try
@@ -85,7 +79,8 @@ namespace DiscordBot.Services
 
         }
 
-         public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query)
+        //!play, Plays requested song by a user
+        public async Task<Embed> PlaySongAsync(SocketGuildUser user, string query)
         {
 
             if(user.VoiceChannel == null)
@@ -105,27 +100,37 @@ namespace DiscordBot.Services
 
 
                     var player = _lavalink.DefaultNode.GetPlayer(user.Guild.Id);
-                    LavaTrack track;
-                    var search = await _lavalink.DefaultNode.SearchYouTubeAsync(query);
 
-                    if(search.LoadResultType == LoadResultType.NoMatches)
+                    if(player == null)
                     {
-                        return await EmbedHandler.CreateErrorEmbed("Sad face", $"Couldn't find anything in youtube that matches the {query}...");
+                        return await EmbedHandler.CreateBasicEmbed("Music, Play", "AmarilloBot must be in a voice channel to play songs! \nHOW? \n1. Connect to a voice channel \n2. Use command '!join'", Color.Orange);                 
+                    }
+
+                    else
+                    {
+                        LavaTrack track;
+                        var search = await _lavalink.DefaultNode.SearchYouTubeAsync(query);
+
+                        if (search.LoadResultType == LoadResultType.NoMatches)
+                        {
+                            return await EmbedHandler.CreateErrorEmbed("Sad face", $"Couldn't find anything in youtube that matches the {query}...");
+                        }
+
+                        track = search.Tracks.FirstOrDefault();
+
+                        if (player.CurrentTrack != null && player.IsPlaying || player.IsPaused)
+                        {
+                            player.Queue.Enqueue(track);
+                            return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Added song {track.Title} to queue \nPosition: {player.Queue.Count}\nDuration: {track.Length}", Color.Green);
+                        }
+
+                        // Was not playing anything, so we play requested track
+                        await player.PlayAsync(track);
+                        await player.SetVolumeAsync(100);
+                        await LoggingService.LogInformationAsync("Node", $"Now playing {track.Title}, {track.Uri}");
+                        return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Now Playing: {track.Title} - {track.Uri} \nDuration: {track.Length}", Color.Green);
                     }
                     
-                    track = search.Tracks.FirstOrDefault();
-
-                    if(player.CurrentTrack != null && player.IsPlaying || player.IsPaused)
-                    {
-                        player.Queue.Enqueue(track);
-                        return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Added song {track.Title} to queue \nPosition: {player.Queue.Count}\nDuration: {track.Length}", Color.Green);
-                    }
-
-                    // Was not playing anything, so we play requested track
-                    await player.PlayAsync(track);
-                    await player.SetVolumeAsync(100);
-                    await LoggingService.LogInformationAsync("Node", $"Now playing {track.Title}, {track.Uri}");
-                    return await EmbedHandler.CreateBasicEmbed("Music, Play", $"Now Playing: {track.Title} \nDuration: {track.Length}", Color.Green);
 
                 }   
 
@@ -137,6 +142,7 @@ namespace DiscordBot.Services
           
         }
 
+        //!pause, Pauses or continues current song
         public async Task<Embed> PauseOrContinueSongAsync(SocketGuildUser user)
         {
 
@@ -182,7 +188,7 @@ namespace DiscordBot.Services
             }
         }
 
-        //show next song
+        //!skip, To skip songs if any in queue
         public async Task<Embed> SkipSongAsync(ulong guildId)
         {
             try
@@ -196,7 +202,7 @@ namespace DiscordBot.Services
 
                 if(player.Queue.Count < 1)
                 {
-                    return await EmbedHandler.CreateErrorEmbed("Music, List", "Unable to skip a track as there is none in queue");
+                    return await EmbedHandler.CreateBasicEmbed(":poop::poop:Shiet:poop::poop:", "No songs in queue! \nAdd songs to queue by using command '!play (songname)'", Color.Orange);
                 }
 
                 else
@@ -273,6 +279,7 @@ namespace DiscordBot.Services
 
         }
 
+        // Fires up when track is finished.. Maybe set timer here for autokick feature
         public async Task OnFinished(LavaPlayer player, LavaTrack track, TrackReason reason)
         {
             if(reason is TrackReason.LoadFailed || reason is TrackReason.Cleanup)
@@ -296,6 +303,7 @@ namespace DiscordBot.Services
             }
         }
 
+        //When player is updated, fires up every 5 seconds
         public async Task OnUpdated(LavaPlayer player, LavaTrack track, TimeSpan timeSpan)
         {
             if(player.IsPlaying || player.IsPaused)
@@ -306,7 +314,7 @@ namespace DiscordBot.Services
             await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate}");
         }
 
-        #region Ideas..
+        #region Ideas.. Move this away from here
 
         //Can be used to run methods by defined interval
 
