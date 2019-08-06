@@ -15,11 +15,5 @@ namespace DiscordBot.Services
             await client.SetGameAsync(statusText);
         }
 
-        //private async Task SetGameStatus(DiscordSocketClient client, Lavalink player)
-        //{
-        //    return await client.SetGameAsync($"{player.DefaultNode.GetPlayer(new AudioService(player)).currentGuild}"));
-        //}
-
-
     }
 }

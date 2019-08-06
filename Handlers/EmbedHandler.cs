@@ -5,12 +5,12 @@ namespace DiscordBot.Handlers
 {
     public static class EmbedHandler
     {
-        public static async Task<Embed> CreateBasicEmbed(string title, string description)
+        public static async Task<Embed> CreateBasicEmbed(string title, string description, Color color)
         {
             var embed = await Task.Run(() => (new EmbedBuilder()
                 .WithTitle(title))
                 .WithDescription(description)
-                .WithColor(Color.Green)
+                .WithColor(color)
                 .WithCurrentTimestamp().Build());
 
             return embed;

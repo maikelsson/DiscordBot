@@ -7,6 +7,6 @@ namespace DiscordBot.Services
 {
     public class TimeOutService
     {
-        private readonly Lavalink _lavalink;
+        
     }
 }

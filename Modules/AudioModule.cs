@@ -42,5 +42,11 @@ namespace DiscordBot.Modules
         {
             await ReplyAsync("", false, await _service.SkipSongAsync(Context.Guild.Id));
         }
+
+        [Command("List")]
+        public async Task List()
+        {
+            await ReplyAsync("", false, await _service.ListSongsAsync(Context.Guild.Id)); 
+        }
     }
 }

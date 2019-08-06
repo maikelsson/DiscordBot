@@ -51,7 +51,7 @@ namespace DiscordBot.Services
 
             catch
             {
-                await EmbedHandler.CreateBasicEmbed("Error", "Wasn't able to add node :(");
+                await EmbedHandler.CreateBasicEmbed("Error", "Wasn't able to add node :(", Color.Purple);
             }
         }
 
