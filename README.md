@@ -2,17 +2,17 @@
 
 # Features
 
-*** Play songs from the youtube
+* Play songs from the youtube
 
-*** Various commands
+* Various commands
 
 # Commands
 
-*** !play (song name) 
+* !play (song name) 
 
-*** !skip
+* !skip
 
-*** !list 
+* !list 
 
-*** etc...
+* etc...
 
