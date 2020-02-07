@@ -47,6 +47,7 @@ namespace DiscordBot.Services
                 var node = await _lavalink.AddNodeAsync(_client);
                 node.TrackFinished += _services.GetService<AudioService>().OnFinished;
                 node.PlayerUpdated += _services.GetService<AudioService>().OnUpdated;
+                await node.ConfigureResuming(true, TimeSpan.FromMinutes(5)); //needs experimenting
             }
 
             catch
@@ -69,8 +70,7 @@ namespace DiscordBot.Services
         private async Task LogClient(DiscordSocketClient client, TokenType type)
         {
             client = _client;
-            //Hide the token pls
-            await client.LoginAsync(type, "NTUyNzYxNjIwNTUyNjEzODg4.XQs-Zg.i9hZLYFKVLHeJK_k0L-ii3eaAIU");
+            await client.LoginAsync(type, Environment.GetEnvironmentVariable("DiscordToken"));
         }
 
         
