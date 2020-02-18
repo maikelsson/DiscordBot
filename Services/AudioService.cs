@@ -314,52 +314,7 @@ namespace DiscordBot.Services
             await LoggingService.LogInformationAsync("OnUpdated", $"We here + Last time updated: {player.LastUpdate}");
         }
 
-        #region Ideas.. Move this away from here
-
-        //Can be used to run methods by defined interval
-
-        /// <summary>
-        /// Something is wrong here, need to look up more.. 
-        /// </summary>
-        /// <param name="_player"></param>
-        /// <returns></returns>
-        /// 
-        //public async Task PeriodicCheckAsync(TimeSpan interval)
-        //{
-        //    while (true)
-        //    {
-        //        await CheckForPlayerLastUpdate();
-        //        await Task.Delay(interval);
-        //    }
-        //}
-
-        //private async Task CheckForPlayerLastUpdate()
-        //{
-        //    var player = _lavalink.DefaultNode.GetPlayer(currentGuild);
-
-        //    if (player == null)
-        //    {
-        //        await LoggingService.LogCriticalAsync("CheckUpdate method", "player == null");
-        //        return;
-        //    }
-
-
-        //    else
-        //    {
-
-        //        TimeSpan timeSpan = DateTime.Now.Subtract(player.LastUpdate.Date);
-
-        //        await LoggingService.LogInformationAsync("timespan", $"timespan: {timeSpan}");
-
-        //        if (timeSpan >= TimeSpan.FromMinutes(1))
-        //        {
-        //            await _lavalink.DefaultNode.DisconnectAsync(currentGuild);
-        //        }
-        //    }
-
-        //}
-
-        //Blueprint for something useful maybe..
+        //WIP
         public async Task OnUserConnectedOrDisconnected(LavaPlayer _player)
         {
             var player = _player;
@@ -381,7 +336,6 @@ namespace DiscordBot.Services
             }
         }
 
-        #endregion
 
     }
 }
