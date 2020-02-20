@@ -63,15 +63,6 @@ namespace DiscordBot.Handlers
                 argPos: argPos,
                 services: _services);
 
-                //Make the message prettier..
-                if (!result.Result.IsSuccess)
-                {
-                    //var embed = EmbedHandler.CreateErrorEmbed("Error", result.ToString());
-                    //context.Channel.SendMessageAsync("", false, embed.Result);
-                }
-
-                //hmmmm
-                //LoggingService.LogInformationAsync(message.Source.ToString(), "");
                 return result;
             
             }

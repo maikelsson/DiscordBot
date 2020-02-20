@@ -26,7 +26,6 @@ namespace DiscordBot.Modules
         }
 
         [Command("Kick")]
-        [Alias("meevittuun", "pois")]
         public async Task Leave()
         {
             await ReplyAsync("", false, await _service.LeaveChannelAsync(
